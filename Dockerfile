@@ -33,6 +33,8 @@ RUN apt-get -y update \
     && apt-get -y --no-install-recommends install \
         ./sdrpp_debian_amd64.deb \
         tini \
+    && apt install libfftw3-dev libglfw3-dev libvolk2-dev libsoapysdr-dev libairspyhf-dev libiio-dev libad9361-dev librtaudio-dev libhackrf-dev -y\
+    && dpkg -i sdrpp_debian_amd64.deb \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && chmod +x /etc/entrypoint.sh \
