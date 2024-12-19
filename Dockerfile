@@ -1,6 +1,6 @@
-FROM debian:bullseye-slim as build_rsp_api
+FROM debian:bookworm-slim AS build_rsp_api
 
-ARG SDRPLAY_API=https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-3.07.1.run
+ARG SDRPLAY_API=https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-3.15.1.run
 ARG BUILD_DIR=/build
 
 RUN apt-get -y update \
@@ -12,14 +12,14 @@ WORKDIR ${BUILD_DIR}
 RUN curl ${SDRPLAY_API} -o SDRplay_RSP_API.run \
     && chmod +x SDRplay_RSP_API.run \
     && ./SDRplay_RSP_API.run --tar -xvf \
-    && cp x86_64/libsdrplay_api.so.3.07 /usr/lib/libsdrplay_api.so \
-    && cp x86_64/libsdrplay_api.so.3.07 /usr/lib/libsdrplay_api.so.3.07 \
+    && cp x86_64/libsdrplay_api.so.3.15 /usr/lib/libsdrplay_api.so \
+    && cp x86_64/libsdrplay_api.so.3.15 /usr/lib/libsdrplay_api.so.3.15 \
     && cp x86_64/sdrplay_apiService /usr/bin/sdrplay_apiService \
     && cp inc/* /usr/include \
-    && chmod 644 /usr/lib/libsdrplay_api.so /usr/lib/libsdrplay_api.so.3.07 /usr/include/* \
+    && chmod 644 /usr/lib/libsdrplay_api.so /usr/lib/libsdrplay_api.so.3.15 /usr/include/* \
     && chmod 755 /usr/bin/sdrplay_apiService
 
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 ARG BUILD_DIR=/build
 
@@ -32,6 +32,8 @@ COPY sdrpp_debian_amd64.deb .
 RUN apt-get -y update \
     && apt-get -y --no-install-recommends install \
         ./sdrpp_debian_amd64.deb \
+        libusb-1.0-0 \
+        librtlsdr-dev \
         tini \
     && apt install libfftw3-dev libglfw3-dev libvolk2-dev libsoapysdr-dev libairspyhf-dev libiio-dev libad9361-dev librtaudio-dev libhackrf-dev -y\
     && dpkg -i sdrpp_debian_amd64.deb \
